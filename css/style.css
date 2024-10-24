@@ -1,0 +1,64 @@
+body{
+    overflow-x: hidden;
+  }
+  .ps-note-header{
+    z-index:1000;
+    position:absolute;
+    width:200px;
+    height:40px;
+    background-color:#f39c12;
+  }
+  .ps-note-aria{
+    margin-top:40px;
+    position:absolute;
+    width:200px;
+    height:160px;
+    background-color:#f1c40f;
+  }
+  .ps-content-field{
+    border-color:red;
+    width:180px;
+    height:140px;
+    margin:10px;
+    overflow:hidden;
+  }
+  .ps-content-field:focus{
+    outline: 0;
+  }
+
+  .ps-remove-btn{
+    color: black;
+  }
+
+  .ps-save-wrap{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ps-save-note{
+    border: none;
+    border-radius: 2px;
+    padding: 4px 12px;
+    background: #ffffff;
+    cursor: pointer;
+  }
+
+  .ps-remove-btn{
+    font-weight: bolder;
+    cursor: pointer;
+    font-family: 'Lato';
+  }
+
+  .ps-note-wrap{
+    z-index: 9999999999999999999999;
+  }
+
+  .ps-remove-btn img{
+    width: 20px;
+  }
+
+  .ps-create-note-nav{
+    cursor: pointer;
+    padding: 0!important;
+  }
