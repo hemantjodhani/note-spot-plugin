@@ -6,20 +6,58 @@
  * Author: Hemant Jodhani
  */
 
+
+register_activation_hook(__FILE__, 'notespot_activate');
+
+function notespot_activate() {
+    $default_settings = array(
+        'user_roles' => ['administrator', 'editor', 'author', 'contributor', 'subscriber'],
+        'note_theme' => 0,
+    );
+
+    if (get_option('pr_settings') === false) {
+        add_option('pr_settings', $default_settings);
+    }
+}
+
 add_action('admin_menu', 'notespot_add_settings_page');
 
+
+
 function notespot_add_settings_page() {
-    add_options_page(
-        'NoteSpot Settings',       
-        'NoteSpot',                
-        'manage_options',          
-        'notespot-settings',       
-        'notespot_render_settings_page' 
+
+    $settings = get_option('pr_settings');
+
+    $current_user = wp_get_current_user();
+    $user_roles = $current_user->roles;
+
+    if(in_array( $user_roles[0] , $settings['user_roles'] )){
+        add_options_page(
+            'NoteSpot Settings',       
+            'NoteSpot',                
+            'manage_options',          
+            'notespot-settings',       
+            'notespot_render_settings_page' 
+        );
+    }
+
+    add_menu_page(
+        'NoteSpot Archive', 
+        'NoteSpot Archive',
+        'manage_options',   
+        'notespot-archive', 
+        'notespot_render_archive_page', 
+        'dashicons-sticky'
     );
+
 }
 
 function notespot_render_settings_page() {
     include "setting-form.php";
+}
+
+function notespot_render_archive_page() {
+    include "notes-archive.php";
 }
 
 
@@ -39,7 +77,6 @@ function notespot_enqueue_scripts() {
 
 }
 
-
 add_action('admin_bar_menu', 'notespot_add_admin_bar_items', 100);
 
 function notespot_add_admin_bar_items($wp_admin_bar) {
@@ -52,16 +89,30 @@ function notespot_add_admin_bar_items($wp_admin_bar) {
         ),
     ));
 
+    $settings = get_option('pr_settings');
+
+    $current_user = wp_get_current_user();
+    $user_roles = $current_user->roles;
+
     $wp_admin_bar->add_node(array(
-        'id'    => 'notespot-settings',
-        'title' => 'Settings',
-        'href'  => admin_url('options-general.php?page=notespot-settings'),
+        'id'    => 'notespot-archive',
+        'title' => 'NoteSpot Archive',
+        'href'  => admin_url('admin.php?page=notespot-archive'),
         'parent'=> 'notespot',
     ));
 
-    $wp_admin_bar->add_node(array(
-        'id'    => 'notespot-create-note',
-        'title' => '<a class="ps-create-note-nav">Create Note</a>',
-        'parent'=> 'notespot',
-    ));
+    if(in_array( $user_roles[0] , $settings['user_roles'] )){
+        $wp_admin_bar->add_node(array(
+            'id'    => 'notespot-create-note',
+            'title' => '<a data-theme="' . esc_attr($settings['note_theme']) . '" class="ps-create-note-nav">Create Note</a>',
+            'parent'=> 'notespot',
+        ));    
+
+        $wp_admin_bar->add_node(array(
+            'id'    => 'notespot-settings',
+            'title' => 'Settings',
+            'href'  => admin_url('options-general.php?page=notespot-settings'),
+            'parent'=> 'notespot',
+        ));
+    }
 }
