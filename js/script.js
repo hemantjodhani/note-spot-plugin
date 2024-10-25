@@ -77,14 +77,45 @@ jQuery(document).ready(function ($) {
     });
 
     $('body').on("click", '.ps-save-note', function (e) {
-        $(this).closest('.ps-note-wrap').fadeOut(300, function () {
-            $(this).remove();
-        });
-    });
+        const note_wrap = $(this).closest('.ps-note-wrap');
+        const note_content = note_wrap.find('.ps-content-field').text();
 
+        const user_id = wp_info.userId;
+
+        if(note_content !== ""){
+            $.ajax({
+                url: wp_info.ajaxUrl,
+                method: 'POST',
+                data: {
+                    action: 'save_note',
+                    note: note_content,
+                    user_id: user_id,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $(note_wrap).fadeOut(300, function () {
+                            $(this).remove();
+                        });
+        
+                    } else {
+                        alert('Error saving note: ' + response.data);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred while saving the note.');
+                }
+            });
+        }else{
+            alert("Note content is empty.");
+        }
+    });
+    
     $('body').on('click', '.ps-remove-btn', function () {
         if (confirm("Are you sure you want to delete this?")) {
             $(this).closest('.ps-note-wrap').remove();
         }
     });
 });
+
+
+
