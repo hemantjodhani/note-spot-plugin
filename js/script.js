@@ -35,7 +35,7 @@ jQuery(document).ready(function ($) {
             header: "#7f7f7f",
             body: "#9F9F9F"
         }
-    ];    
+    ];
 
     var theme = noteThemes[theme_index];
 
@@ -48,7 +48,10 @@ jQuery(document).ready(function ($) {
     <div class="ps-note-header" style= background-color:${note_header_color}>
       <div class="ps-save-wrap">
         <span class="ps-remove-btn"><img src="${plugin_dir}/js/window-close.png"></span>
-        <button class="ps-save-note">Save</button>
+        <div class="ps-save--loader-wrap">
+            <div class="ps-save-wating-loader"></div>
+            <button class="ps-save-note">Save</button>
+        </div>
       </div>
     </div>
     <div class="ps-note-aria" style= background-color:${note_body_color}>
@@ -80,9 +83,12 @@ jQuery(document).ready(function ($) {
         const note_wrap = $(this).closest('.ps-note-wrap');
         const note_content = note_wrap.find('.ps-content-field').text();
 
+
         const user_id = wp_info.userId;
 
-        if(note_content !== ""){
+        if (note_content !== "") {
+            const loader = note_wrap.find('.ps-save-wating-loader');
+            loader.show();
             $.ajax({
                 url: wp_info.ajaxUrl,
                 method: 'POST',
@@ -91,25 +97,28 @@ jQuery(document).ready(function ($) {
                     note: note_content,
                     user_id: user_id,
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         $(note_wrap).fadeOut(300, function () {
                             $(this).remove();
                         });
-        
+
                     } else {
                         alert('Error saving note: ' + response.data);
+                        $(note_wrap).fadeOut(300, function () {
+                            $(this).remove();
+                        });
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('An error occurred while saving the note.');
                 }
             });
-        }else{
+        } else {
             alert("Note content is empty.");
         }
     });
-    
+
     $('body').on('click', '.ps-remove-btn', function () {
         if (confirm("Are you sure you want to delete this?")) {
             $(this).closest('.ps-note-wrap').remove();
