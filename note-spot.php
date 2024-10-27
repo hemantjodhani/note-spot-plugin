@@ -191,3 +191,33 @@ function notespot_uninstall()
     $table_name = $wpdb->prefix . 'notespot_notes';
     $wpdb->query("DROP TABLE IF EXISTS $table_name");
 }
+
+
+add_action('init', 'notespot_handle_note_deletion');
+
+function notespot_handle_note_deletion()
+{
+    global $wpdb;
+
+    if (isset($_GET['note_id'])) {
+        $note_id = intval($_GET['note_id']);
+        $table_name = $wpdb->prefix . 'notespot_notes';
+        
+        $wpdb->delete($table_name, array('note_id' => $note_id));
+
+        wp_redirect(admin_url('admin.php?page=notespot-archive'));
+        exit;
+    }
+
+    if (isset($_POST['ps_setting_changes'])) {
+        $updated_theme = $_POST['ps_note_theme'];
+        $updated_roles = isset($_POST['user_role']) ? $_POST['user_role'] : array();
+        $updated_settings = array(
+            'user_roles' => $updated_roles,
+            'note_theme' => $updated_theme,
+        );
+        update_option('pr_settings', $updated_settings);
+        wp_redirect(admin_url('options-general.php?page=notespot-settings'));
+        exit;
+    }
+}

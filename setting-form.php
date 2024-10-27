@@ -1,33 +1,11 @@
 <?php
 global $wp_roles;
-
 $user_roles = $wp_roles->roles;
-
 $settings = get_option('pr_settings');
 $user_settings = $settings['user_roles'];
-
 $note_theme =  $settings['note_theme'];   
-
-
-if (isset($_POST['ps_setting_changes'])) {
-    $updated_theme = $_POST['ps_note_theme'];
-    $updated_roles = isset($_POST['user_role']) ? $_POST['user_role'] : array();
-
-    $updated_settings = array(
-        'user_roles' => $updated_roles,
-        'note_theme' => $updated_theme,
-    );
-
-    update_option('pr_settings', $updated_settings);
-
-    wp_redirect(admin_url('options-general.php?page=notespot-settings'));
-    exit;
-}
-
-
 ?>
-
-<h1>NoteSpot Settings</h1>
+<h3>NoteSpot Settings</h3>
 
 <div class="ps-from-wrap">
     <form action="" method="POST">
@@ -35,14 +13,15 @@ if (isset($_POST['ps_setting_changes'])) {
             <h3>User roles to use sticky notes</h3>
             <?php foreach ($user_roles as $role_key => $role): ?>
                 <div>
-                    <input type="checkbox" name="user_role[]" value="<?php echo esc_attr($role_key); ?>" <?php if (in_array($role_key, $user_settings)) { echo "checked"; } ?>>
+                    <input type="checkbox" name="user_role[]" value="<?php echo esc_attr($role_key); ?>" <?php if (in_array($role_key, $user_settings)) { echo "checked";  
+                                                                     } ?>>
                     <?php echo esc_html($role['name']); ?>
                 </div>
             <?php endforeach; ?>
         </div>
 
         <div class="ps-note-theme">
-            <h3>Default Theme</h3>
+            <h4>Default Theme</h4>
             <div class="ps-note-preview-wrap">
                 <input type="radio" name="ps_note_theme" value="0" <?php echo ($note_theme == 0) ? 'checked' : ''; ?>>
                 <div class="ps-note-preview">

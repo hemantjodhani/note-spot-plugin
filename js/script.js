@@ -125,6 +125,3 @@ jQuery(document).ready(function ($) {
         }
     });
 });
-
-
-
